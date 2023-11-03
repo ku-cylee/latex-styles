@@ -1,0 +1,142 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{assignment}[2023/10/28 v1.1.0 CYLEE Assignment]
+
+% For style file
+\RequirePackage{ifthen}
+
+% Page Settings
+\RequirePackage{titling}
+\RequirePackage{geometry}
+\RequirePackage{setspace}
+
+% Font
+\RequirePackage{fontspec}
+\RequirePackage[T1]{fontenc}
+
+% Figure
+\RequirePackage{graphicx}
+\RequirePackage{subcaption}
+
+% Math
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+
+% Code
+\RequirePackage{listings}
+
+% Other Settings
+\RequirePackage{xcolor}
+\RequirePackage{enumitem}
+
+%%%%%%% OPTIONS DECLARATION %%%%%%%
+
+% Font Options
+\newcommand*{\Asgmt@font}{default}
+\DeclareOption{cascadia-mono}{%
+    \renewcommand*{\Asgmt@font}{CascadiaMono}
+}
+\DeclareOption{cascadia-code}{
+    \renewcommand*{\Asgmt@font}{CascadiaCode}
+}
+
+% Code Environment Options
+
+\DeclareOption{minted}{\def\Asgmt@minted}
+
+\ProcessOptions\relax
+
+%%%%%%% OPTIONS PROCESS %%%%%%%
+
+\ifthenelse{\equal{\Asgmt@font}{default}}
+    {
+        \DeclareFontSeriesDefault[tt]{bf}{m}
+        \DeclareFontSeriesDefault[tt]{md}{l}
+    }
+    {
+         \setmonofont{\Asgmt@font}[
+            Path=./fonts/,
+            Scale=.85,
+            Extension=.ttf,
+            UprightFont=*-Light,
+            ItalicFont=*-LightItalic,
+            BoldFont=*-Regular,
+            BoldItalicFont=*-Italic,
+        ]
+    }
+
+\ifdefined\Asgmt@minted
+    \RequirePackage[newfloat]{minted}
+
+    \usemintedstyle{sas}
+    
+    \setminted{
+        linenos,
+        bgcolor=codebg,
+        baselinestretch=1,
+        frame=single,
+        framerule=0pt,
+        framesep=10pt,
+        numbersep=8pt,
+    }
+    
+    \renewcommand{\theFancyVerbLine}{\textcolor[HTML]{707070}{\small\arabic{FancyVerbLine}}}
+    
+    \newenvironment{code}[2]{
+        \vspace{8pt}
+        \captionsetup{type=listing, name=Code}
+        \caption{#2}\label{#1}
+        \vspace{-10pt}
+    }{}
+\fi
+
+%%%%%%% OPTIONS END %%%%%%%
+
+\setlength\parindent{0pt}
+\setlength\parskip{4pt}
+\linespread{1.6}
+\geometry{margin=2.5cm, nohead}
+\setlist{itemindent=-10pt}
+
+\renewcommand\thesubsection{\arabic{subsection}}
+
+\newcommand{\figures}[3]
+    {\begin{figure}[h!]\centering#3\caption{#2}\label{#1}\end{figure}}
+
+\newcommand{\fig}[2]{\includegraphics[width=#2\textwidth]{#1}}
+
+\newcommand{\subfig}[4]{
+    \begin{subfigure}{#4\textwidth}\centering
+        \includegraphics[width=\textwidth]{#3}
+        \caption{#2}\label{#1}
+    \end{subfigure}
+}
+
+\newcommand\cd\texttt
+
+\definecolor{codebg}{HTML}{f2f2f2}
+\definecolor{codecomment}{HTML}{245724}
+\definecolor{codekeyword}{HTML}{00158c}
+\definecolor{codestring}{HTML}{8f1111}
+\definecolor{codelinenumber}{HTML}{707070}
+
+\lstset{
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{codecomment},
+    basicstyle=\ttfamily\normalsize\setstretch{1},
+    keywordstyle=\color{codekeyword},
+    stringstyle=\color{codestring},
+    captionpos=t,
+    xleftmargin=10pt,
+    xrightmargin=10pt,
+    frame=single,
+    framesep=10pt,
+    framerule=0pt,
+    numbers=left,
+    numbersep=14pt,
+    numberstyle=\ttfamily\footnotesize\color{codelinenumber},
+}
+\renewcommand\lstlistingname{Code}
+
+\newcommand{\coursename}[1]{\def\Asgmt@coursename{#1}}
+\pretitle{\begin{center}\LARGE}
+\posttitle{\par\large\textit{\Asgmt@coursename}\par\end{center}\vskip 0.5em}
